@@ -4,7 +4,7 @@ services:
   - type: web
     runtime: static
     name: nicolasquipaie
-    buildCommand: export DOTNET_CLI_HOME=$HOME && curl -fsSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && bash dotnet-install.sh --channel 10.0 --install-dir $HOME/.dotnet && export PATH="$HOME/.dotnet:$PATH" && dotnet workload restore src/Front/NicolasQuiPaieWeb/NicolasQuiPaieWeb.csproj && dotnet publish src/Front/NicolasQuiPaieWeb/NicolasQuiPaieWeb.csproj -c Release -o src/Front/NicolasQuiPaieWeb/.render-publish /p:UseAppHost=false
+    buildCommand: export DOTNET_CLI_HOME=$HOME && curl -fsSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && bash dotnet-install.sh --channel 10.0 --install-dir $HOME/.dotnet && export PATH="$HOME/.dotnet:$PATH" && dotnet workload install wasm-tools --skip-manifest-update && dotnet workload restore src/Front/NicolasQuiPaieWeb/NicolasQuiPaieWeb.csproj && dotnet publish src/Front/NicolasQuiPaieWeb/NicolasQuiPaieWeb.csproj -c Release -o src/Front/NicolasQuiPaieWeb/.render-publish /p:UseAppHost=false
     staticPublishPath: src/Front/NicolasQuiPaieWeb/.render-publish/wwwroot
     autoDeployTrigger: commit
     routes:
