@@ -4,8 +4,10 @@ services:
   - type: web
     runtime: static
     name: nicolasquipaie
-    plan: free
-    rootDir: src/Front/NicolasQuiPaieWeb
-    buildCommand: dotnet publish NicolasQuiPaieWeb.csproj -c Release -o .render-publish /p:UseAppHost=false
+    buildCommand: dotnet publish src/Front/NicolasQuiPaieWeb/NicolasQuiPaieWeb.csproj -c Release -o src/Front/NicolasQuiPaieWeb/.render-publish /p:UseAppHost=false
     staticPublishPath: src/Front/NicolasQuiPaieWeb/.render-publish/wwwroot
     autoDeployTrigger: commit
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
