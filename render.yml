@@ -4,6 +4,7 @@ services:
   - type: static
     name: nicolasquipaie
     plan: free
-    buildCommand: dotnet publish src/Front/NicolasQuiPaieWeb/NicolasQuiPaieWeb.csproj -c Release -o .render-publish /p:UseAppHost=false
-    staticPublishPath: src/Front/NicolasQuiPaieWeb/wwwroot
+    rootDir: src/Front/NicolasQuiPaieWeb
+    buildCommand: dotnet publish NicolasQuiPaieWeb.csproj -c Release -o .render-publish /p:UseAppHost=false
+    staticPublishPath: .render-publish/wwwroot
     autoDeploy: true
