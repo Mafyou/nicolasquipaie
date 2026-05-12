@@ -26,7 +26,7 @@ public static class ApplicationServicesExtension
                     }
                 });
 
-                // Configuration JWT pour Swagger
+                // Configuration JWT pour Swagger (inchangée)
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -36,25 +36,20 @@ public static class ApplicationServicesExtension
                     Scheme = "Bearer"
                 });
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
+                // SecurityRequirement mise à jour pour .NET 10
+                c.AddSecurityRequirement(document =>
                 {
-                    Reference = new OpenApiReference
+                    return new OpenApiSecurityRequirement
                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                []
-            }
-        });
+                        {
+                            new OpenApiSecuritySchemeReference("Bearer", document), []
+                        }
+                    };
+                });
             });
-        }
 
-        // Configuration CORS
-        services.AddCors(options =>
+            // Configuration CORS
+            services.AddCors(options =>
         {
             options.AddPolicy("AllowBlazorClient", policy =>
             {
@@ -76,54 +71,55 @@ public static class ApplicationServicesExtension
             });
         });
 
-        // In development, also allow any localhost
-        if (env.IsDevelopment())
-        {
-            services.AddCors(options =>
+            // In development, also allow any localhost
+            if (env.IsDevelopment())
             {
-                options.AddPolicy("DevelopmentCors", policy =>
+                services.AddCors(options =>
                 {
-                    policy.SetIsOriginAllowed(origin =>
+                    options.AddPolicy("DevelopmentCors", policy =>
                     {
-                        if (string.IsNullOrWhiteSpace(origin)) return false;
+                        policy.SetIsOriginAllowed(origin =>
+                        {
+                            if (string.IsNullOrWhiteSpace(origin)) return false;
 
-                        // Allow any localhost origin in development
-                        return origin.StartsWith("http://localhost:") || origin.StartsWith("https://localhost:");
-                    })
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                            // Allow any localhost origin in development
+                            return origin.StartsWith("http://localhost:") || origin.StartsWith("https://localhost:");
+                        })
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                    });
                 });
+            }
+
+            // Configuration Entity Framework
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
+
+            // 🎯 Use extension methods to configure authentication and authorization
+            services.AddNicolasQuiPaieJwtAuthentication(configuration);
+            services.AddNicolasQuiPaieAuthorization();
+
+            // Configuration FluentValidation
+            services.AddValidatorsFromAssemblyContaining<CreateProposalDtoValidator>();
+
+            // Injection des dépendances - Repositories
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IProposalRepository, ProposalRepository>();
+            services.AddScoped<IVoteRepository, VoteRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IApiLogRepository, ApiLogRepository>();
+
+            // Injection des dépendances - Services
+            services.AddScoped<IProposalService, ProposalService>();
+            services.AddScoped<IVotingService, VotingService>();
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IAnalyticsService, AnalyticsService>();
         }
-
-        // Configuration Entity Framework
-        services.AddDbContext<ApplicationDbContext>(options =>
-        {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-        });
-
-        // 🎯 Use extension methods to configure authentication and authorization
-        services.AddNicolasQuiPaieJwtAuthentication(configuration);
-        services.AddNicolasQuiPaieAuthorization();
-
-        // Configuration FluentValidation
-        services.AddValidatorsFromAssemblyContaining<CreateProposalDtoValidator>();
-
-        // Injection des dépendances - Repositories
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IProposalRepository, ProposalRepository>();
-        services.AddScoped<IVoteRepository, VoteRepository>();
-        services.AddScoped<ICommentRepository, CommentRepository>();
-        services.AddScoped<ICategoryRepository, CategoryRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IApiLogRepository, ApiLogRepository>();
-
-        // Injection des dépendances - Services
-        services.AddScoped<IProposalService, ProposalService>();
-        services.AddScoped<IVotingService, VotingService>();
-        services.AddScoped<IJwtService, JwtService>();
-        services.AddScoped<IEmailService, EmailService>();
-        services.AddScoped<IAnalyticsService, AnalyticsService>();
     }
 }

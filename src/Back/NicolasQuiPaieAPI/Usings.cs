@@ -7,7 +7,7 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Storage;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.IdentityModel.Tokens;
-global using Microsoft.OpenApi.Models;
+global using Microsoft.OpenApi;
 global using NicolasQuiPaieAPI.Application.Interfaces;
 global using NicolasQuiPaieAPI.Application.Mappings;
 global using NicolasQuiPaieAPI.Application.Services;

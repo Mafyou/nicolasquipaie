@@ -1,0 +1,9 @@
+# Render service id: srv-d81gv0po3t8c73ek2g9g
+# Expected Render URL: https://nicolasquipaie.onrender.com
+services:
+  - type: static
+    name: nicolasquipaie
+    plan: free
+    buildCommand: dotnet publish src/Front/NicolasQuiPaieWeb/NicolasQuiPaieWeb.csproj -c Release -o .render-publish /p:UseAppHost=false && rm -rf dist && mkdir -p dist && cp -R .render-publish/wwwroot/. dist
+    staticPublishPath: ./dist
+    autoDeploy: true
