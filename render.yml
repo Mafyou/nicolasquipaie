@@ -1,8 +1,8 @@
 # Render service id: srv-d81gv0po3t8c73ek2g9g
 # Expected Render URL: https://nicolasquipaie.onrender.com
 services:
-  - type: static
-    name: nicolasquipaie
+  - type: web
+    name: nicolasquipaie-docker
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: .
