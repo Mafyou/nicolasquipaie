@@ -2,6 +2,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
+# WebAssembly AOT toolchain requires python to be available in PATH.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends python3 \
+    && ln -sf /usr/bin/python3 /usr/bin/python \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy project files for dependency resolution
 COPY src/Shared/NicolasQuiPaieData/NicolasQuiPaieData.csproj src/Shared/NicolasQuiPaieData/
 COPY src/Front/NicolasQuiPaieWeb/NicolasQuiPaieWeb.csproj src/Front/NicolasQuiPaieWeb/
